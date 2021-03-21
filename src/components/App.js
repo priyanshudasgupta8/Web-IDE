@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Editor from './Editor';
+import DDB from './ddb'
 import useLocalStorage from '../hooks/useLocalStorage';
 
 function App() {
@@ -7,6 +8,7 @@ function App() {
   const [css, setCss] = useLocalStorage('css', '');
   const [js, setJs] = useLocalStorage('js', '');
   const [srcDoc, setSrcDoc] = useState('');
+  const [srcDoc2, setSrcDoc2] = useState('');
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -16,7 +18,23 @@ function App() {
         <style>${css}</style>
         <script>${js}</script>
       </html>
-    `)
+      `)
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [html, css, js]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      try {
+        if(!js && !html && !css) {
+          setSrcDoc2("This is the debugger-in-progress cum console --- To access the current console, press Ctrl+ Shift + J --- Errors will show up here")
+        } else {
+          setSrcDoc2(`${Function(js)()}`)
+        }
+      } catch (err) {
+        setSrcDoc2(err)
+      }
     }, 500);
 
     return () => clearTimeout(timeout);
@@ -43,6 +61,7 @@ function App() {
           value={js} 
           onChange={setJs} 
         />
+        <DDB/>
       </div>
       <div className="pane">
         <iframe 
@@ -50,7 +69,16 @@ function App() {
           title="output"
           sandbox="allow-scripts"
           frameBorder="0"
-          width="100%"
+          width="60%"
+          height="100%"
+        />
+        <iframe 
+          width="30%" 
+          className="console"
+          srcDoc={srcDoc2}
+          title="output"
+          sandbox="allow-scripts"
+          frameBorder="0"
           height="100%"
         />
       </div>

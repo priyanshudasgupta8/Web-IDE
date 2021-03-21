@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-const PREFIX = 'codepen-clone-'
+const PREFIX = 'web-ide-'
 
 export default function useLocalStorage(key, initialVal) {
     const prefixedKey = PREFIX + key;
